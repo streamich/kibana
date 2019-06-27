@@ -35,9 +35,9 @@ import {
   HELLO_WORLD_EMBEDDABLE_TYPE,
   HelloWorldEmbeddableFactory,
 } from '../test_samples/index';
-import { isErrorEmbeddable, EmbeddableOutput, EmbeddableFactory } from '../embeddables';
+import { isErrorEmbeddable, EmbeddableOutput } from '../embeddables';
 import { ContainerInput } from './i_container';
-import { ViewMode } from '../types';
+import { ViewMode, EmbeddableFactoryRegistry } from '../types';
 import {
   FilterableEmbeddableInput,
   FilterableEmbeddable,
@@ -46,7 +46,7 @@ import { ERROR_EMBEDDABLE_TYPE } from '../embeddables/error_embeddable';
 import { Filter, FilterStateStore } from '@kbn/es-query';
 import { PanelNotFoundError } from './panel_not_found_error';
 
-const embeddableFactories = new Map<string, EmbeddableFactory>();
+const embeddableFactories: EmbeddableFactoryRegistry = new Map();
 embeddableFactories.set(FILTERABLE_EMBEDDABLE, new FilterableEmbeddableFactory());
 embeddableFactories.set(CONTACT_CARD_EMBEDDABLE, new SlowContactCardEmbeddableFactory());
 embeddableFactories.set(HELLO_WORLD_EMBEDDABLE_TYPE, new HelloWorldEmbeddableFactory());

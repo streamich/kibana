@@ -22,7 +22,7 @@ import '../../../np_core.test.mocks';
 import { EmbeddableInput } from '../../../embeddables/i_embeddable';
 import { Embeddable } from '../../../embeddables/embeddable';
 import { ContactCardEmbeddable } from '../../../test_samples';
-import { ViewMode } from '../../../types';
+import { ViewMode, EmbeddableFactoryRegistry } from '../../../types';
 import { EditPanelAction } from './edit_panel_action';
 
 class EditableEmbeddable extends Embeddable {
@@ -39,7 +39,8 @@ class EditableEmbeddable extends Embeddable {
 }
 
 test('is compatible when edit url is available, in edit mode and editable', async () => {
-  const action = new EditPanelAction();
+  const embeddableFactories: EmbeddableFactoryRegistry = new Map();
+  const action = new EditPanelAction(embeddableFactories);
   expect(
     await action.isCompatible({
       embeddable: new EditableEmbeddable({ id: '123', viewMode: ViewMode.EDIT }, true),
@@ -48,7 +49,8 @@ test('is compatible when edit url is available, in edit mode and editable', asyn
 });
 
 test('getHref returns the edit urls', async () => {
-  const action = new EditPanelAction();
+  const embeddableFactories: EmbeddableFactoryRegistry = new Map();
+  const action = new EditPanelAction(embeddableFactories);
   expect(action.getHref).toBeDefined();
 
   if (action.getHref) {
@@ -62,7 +64,8 @@ test('getHref returns the edit urls', async () => {
 });
 
 test('is not compatible when edit url is not available', async () => {
-  const action = new EditPanelAction();
+  const embeddableFactories: EmbeddableFactoryRegistry = new Map();
+  const action = new EditPanelAction(embeddableFactories);
   expect(
     await action.isCompatible({
       embeddable: new ContactCardEmbeddable({
@@ -75,7 +78,8 @@ test('is not compatible when edit url is not available', async () => {
 });
 
 test('is not visible when edit url is available but in view mode', async () => {
-  const action = new EditPanelAction();
+  const embeddableFactories: EmbeddableFactoryRegistry = new Map();
+  const action = new EditPanelAction(embeddableFactories);
   expect(
     await action.isCompatible({
       embeddable: new EditableEmbeddable(
@@ -90,7 +94,8 @@ test('is not visible when edit url is available but in view mode', async () => {
 });
 
 test('is not compatible when edit url is available, in edit mode, but not editable', async () => {
-  const action = new EditPanelAction();
+  const embeddableFactories: EmbeddableFactoryRegistry = new Map();
+  const action = new EditPanelAction(embeddableFactories);
   expect(
     await action.isCompatible({
       embeddable: new EditableEmbeddable(

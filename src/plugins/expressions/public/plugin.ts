@@ -19,7 +19,7 @@
 
 import { PluginInitializerContext, CoreSetup, CoreStart, Plugin } from '../../../core/public';
 import { ExpressionInterpretWithHandlers, ExpressionExecutor } from './types';
-import { FunctionsRegistry, RenderFunctionsRegistry, TypesRegistry } from './registries';
+import { FunctionsRegistry, RenderFunctionsRegistry, TypesRegistry } from '../common';
 import { Setup as InspectorSetup, Start as InspectorStart } from '../../inspector/public';
 import {
   setCoreStart,

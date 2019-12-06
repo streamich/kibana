@@ -17,15 +17,27 @@
  * under the License.
  */
 
-export * from './types';
-export * from './core';
-export * from './errors';
-export * from './store';
-export * from './parse';
-export * from './resize_checker';
-export * from './render_complete';
-export * from './store';
-export * from './errors';
-export * from './field_mapping';
-export * from './storage';
-export * from './storage/hashed_item_store';
+import * as React from 'react';
+import { UiComponent } from '../../../kibana_utils/public';
+
+const { createElement: h, useRef, useEffect } = React;
+
+export const uiToReactComponent = <Props extends object>(
+  uiComp: UiComponent<Props>
+): React.ComponentType<Props> => {
+  const reactComp: React.FC<Props> = props => {
+    const ref = useRef<HTMLDivElement>();
+    useEffect(() => {
+      if (ref.current) {
+        uiComp.render(ref.current, props);
+      }
+      return () => {
+        uiComp.unmount();
+      };
+    });
+
+    return h('div', { ref });
+  };
+
+  return reactComp;
+};

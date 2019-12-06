@@ -17,15 +17,30 @@
  * under the License.
  */
 
-export * from './types';
-export * from './core';
-export * from './errors';
-export * from './store';
-export * from './parse';
-export * from './resize_checker';
-export * from './render_complete';
-export * from './store';
-export * from './errors';
-export * from './field_mapping';
-export * from './storage';
-export * from './storage/hashed_item_store';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import { UiComponent } from '../../../kibana_utils/public';
+
+const { createElement: h } = React;
+
+export const reactToUiComponent = <Props extends object>(
+  reactComp: React.ComponentType<Props>
+): UiComponent<Props> => {
+  let lastEl: HTMLElement | undefined;
+
+  const render: UiComponent<Props>['render'] = (el, props) => {
+    lastEl = el;
+    ReactDOM.render(h(reactComp, props), el);
+  };
+
+  const unmount: UiComponent<Props>['unmount'] = () => {
+    if (lastEl) ReactDOM.unmountComponentAtNode(lastEl);
+  };
+
+  const uiComp: UiComponent<Props> = {
+    render,
+    unmount,
+  };
+
+  return uiComp;
+};

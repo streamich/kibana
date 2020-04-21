@@ -17,6 +17,7 @@ import {
 
 import { DashboardToDashboardDrilldown } from './dashboard_to_dashboard_drilldown';
 import { DashboardToDiscoverDrilldown } from './dashboard_to_discover_drilldown';
+import { DashboardToUrlDrilldown } from './dashboard_to_url_drilldown';
 import { createStartServicesGetter } from '../../../../../../src/plugins/kibana_utils/public/';
 
 declare module '../../../../../../src/plugins/ui_actions/public' {
@@ -67,5 +68,8 @@ export class DashboardDrilldownsService {
 
     const dashboardToDiscoverDrilldown = new DashboardToDiscoverDrilldown({ start });
     plugins.drilldowns.registerDrilldown(dashboardToDiscoverDrilldown);
+
+    const dashboardToUrlDrilldown = new DashboardToUrlDrilldown({ start });
+    plugins.drilldowns.registerDrilldown(dashboardToUrlDrilldown);
   }
 }

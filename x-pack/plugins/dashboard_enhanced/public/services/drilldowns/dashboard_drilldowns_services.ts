@@ -16,6 +16,7 @@ import {
 } from './actions';
 
 import { DashboardToDashboardDrilldown } from './dashboard_to_dashboard_drilldown';
+import { DashboardToDiscoverDrilldown } from './dashboard_to_discover_drilldown';
 import { createStartServicesGetter } from '../../../../../../src/plugins/kibana_utils/public/';
 
 declare module '../../../../../../src/plugins/ui_actions/public' {
@@ -41,16 +42,14 @@ export class DashboardDrilldownsService {
   }
 
   setupDrilldowns(core: CoreSetup<StartDependencies>, plugins: SetupDependencies) {
-    const getStartServices = createStartServicesGetter<StartDependencies, unknown>(
-      core.getStartServices
-    );
+    const start = createStartServicesGetter<StartDependencies, unknown>(core.getStartServices);
 
-    const overlays = () => getStartServices().core.overlays;
-    const drilldowns = () => getStartServices().plugins.drilldowns;
-    const getSavedObjectsClient = () => getStartServices().core.savedObjects.client;
-    const getApplicationService = () => getStartServices().core.application;
-    const getGetUrlGenerator = () => getStartServices().plugins.share.urlGenerators.getUrlGenerator;
-    const getDataPluginActions = () => getStartServices().plugins.data.actions;
+    const overlays = () => start().core.overlays;
+    const drilldowns = () => start().plugins.drilldowns;
+    const getSavedObjectsClient = () => start().core.savedObjects.client;
+    const getApplicationService = () => start().core.application;
+    const getGetUrlGenerator = () => start().plugins.share.urlGenerators.getUrlGenerator;
+    const getDataPluginActions = () => start().plugins.data.actions;
 
     const actionFlyoutCreateDrilldown = new FlyoutCreateDrilldownAction({ overlays, drilldowns });
     plugins.uiActions.addTriggerAction(CONTEXT_MENU_TRIGGER, actionFlyoutCreateDrilldown);
@@ -65,5 +64,8 @@ export class DashboardDrilldownsService {
       getDataPluginActions,
     });
     plugins.drilldowns.registerDrilldown(dashboardToDashboardDrilldown);
+
+    const dashboardToDiscoverDrilldown = new DashboardToDiscoverDrilldown({ start });
+    plugins.drilldowns.registerDrilldown(dashboardToDiscoverDrilldown);
   }
 }

@@ -1547,8 +1547,9 @@ export const search: {
         InvalidEsCalendarIntervalError: typeof InvalidEsCalendarIntervalError;
         InvalidEsIntervalFormatError: typeof InvalidEsIntervalFormatError;
         isDateHistogramBucketAggConfig: typeof isDateHistogramBucketAggConfig;
+        isNumberType: (agg: import("./search").AggConfig) => boolean;
         isStringType: (agg: import("./search").AggConfig) => boolean;
-        isType: (type: string) => (agg: import("./search").AggConfig) => boolean;
+        isType: (...types: string[]) => (agg: import("./search").AggConfig) => boolean;
         isValidEsInterval: typeof isValidEsInterval;
         isValidInterval: typeof isValidInterval;
         parentPipelineType: string;

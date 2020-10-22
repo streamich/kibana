@@ -29,8 +29,10 @@ import { Trigger, TriggerContext } from '../triggers/trigger';
 import { TriggerInternal } from '../triggers/trigger_internal';
 import { TriggerContract } from '../triggers/trigger_contract';
 import { UiActionsExecutionService } from './ui_actions_execution_service';
+import { UsageCollectionSetup } from '../../../usage_collection/public';
+import { UiActionsTelemetryService, UiActionsTelemetryServiceParams } from './ui_actions_telemetry';
 
-export interface UiActionsServiceParams {
+export interface UiActionsServiceParams extends UiActionsTelemetryServiceParams {
   readonly triggers?: TriggerRegistry;
   readonly actions?: ActionRegistry;
 
@@ -42,18 +44,21 @@ export interface UiActionsServiceParams {
 
 export class UiActionsService {
   public readonly executionService = new UiActionsExecutionService();
+  protected readonly telemetry: UiActionsTelemetryService;
   protected readonly triggers: TriggerRegistry;
   protected readonly actions: ActionRegistry;
   protected readonly triggerToActions: TriggerToActionsRegistry;
 
-  constructor({
-    triggers = new Map(),
-    actions = new Map(),
-    triggerToActions = new Map(),
-  }: UiActionsServiceParams = {}) {
-    this.triggers = triggers;
-    this.actions = actions;
-    this.triggerToActions = triggerToActions;
+  /**
+   * Telemetry reporting function. Set it to enable telemetry for actions.
+   */
+  public reportUiStats?: UsageCollectionSetup['reportUiStats'];
+
+  constructor(params: UiActionsServiceParams = {}) {
+    this.triggers = params.triggers || new Map();
+    this.actions = params.actions || new Map();
+    this.triggerToActions = params.triggerToActions || new Map();
+    this.telemetry = new UiActionsTelemetryService(params);
   }
 
   public readonly registerTrigger = (trigger: Trigger) => {
@@ -80,14 +85,10 @@ export class UiActionsService {
   public readonly registerAction = <A extends ActionDefinition>(
     definition: A
   ): Action<ActionContext<A>> => {
-    if (this.actions.has(definition.id)) {
+    if (this.actions.has(definition.id))
       throw new Error(`Action [action.id = ${definition.id}] already registered.`);
-    }
-
-    const action = new ActionInternal(definition);
-
+    const action = new ActionInternal(definition, { telemetry: this.telemetry });
     this.actions.set(action.id, action);
-
     return action;
   };
 

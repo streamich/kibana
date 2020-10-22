@@ -41,20 +41,23 @@ export type UiActionsSetup = Pick<
 export type UiActionsStart = PublicMethodsOf<UiActionsService>;
 
 export interface UiActionsSetupDeps {
-  usageCollection: UsageCollectionSetup;
+  usageCollection?: UsageCollectionSetup;
 }
 
 export interface UiActionsStartDeps {
-  usageCollection: UsageCollectionStart;
+  usageCollection?: UsageCollectionStart;
 }
 
 export class UiActionsPlugin
   implements Plugin<UiActionsSetup, UiActionsStart, UiActionsSetupDeps, UiActionsStartDeps> {
-  private readonly service = new UiActionsService();
+  private service!: UiActionsService;
 
   constructor(initializerContext: PluginInitializerContext) {}
 
   public setup(core: CoreSetup, plugins: UiActionsSetupDeps): UiActionsSetup {
+    this.service = new UiActionsService({
+      usageCollection: plugins.usageCollection,
+    });
     this.service.registerTrigger(selectRangeTrigger);
     this.service.registerTrigger(valueClickTrigger);
     this.service.registerTrigger(applyFilterTrigger);

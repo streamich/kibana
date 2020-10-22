@@ -17,19 +17,22 @@
  * under the License.
  */
 
-// @ts-ignore
-import React from 'react';
 import { Action, ActionContext as Context, ActionDefinition } from './action';
 import { Presentable, PresentableGrouping } from '../util/presentable';
 import { uiToReactComponent } from '../../../kibana_react/public';
 import { ActionType } from '../types';
+import { UiActionsTelemetryService } from '../service/ui_actions_telemetry';
+
+export interface ActionInternalParams {
+  telemetry: UiActionsTelemetryService;
+}
 
 /**
  * @internal
  */
 export class ActionInternal<A extends ActionDefinition = ActionDefinition>
   implements Action<Context<A>>, Presentable<Context<A>> {
-  constructor(public readonly definition: A) {}
+  constructor(public readonly definition: A, protected readonly params: ActionInternalParams) {}
 
   public readonly id: string = this.definition.id;
   public readonly type: ActionType = this.definition.type || '';
@@ -39,6 +42,7 @@ export class ActionInternal<A extends ActionDefinition = ActionDefinition>
   public readonly grouping?: PresentableGrouping<Context<A>> = this.definition.grouping;
 
   public execute(context: Context<A>) {
+    this.params.telemetry.reportActionExecuted(this);
     return this.definition.execute(context);
   }
 

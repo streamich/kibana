@@ -153,6 +153,12 @@ export interface ActionDefinition<Context extends BaseContext = {}>
    * right-clicks and selects "Open in new tab".
    */
   getHref?(context: ActionDefinitionContext<Context>): Promise<string | undefined>;
+
+  /**
+   * Whether to record telemetry information for this action. Telemetry is opt-in,
+   * so you need to set this field to `true` to enable it.
+   */
+  recordTelemetry?: boolean;
 }
 
 export type ActionContext<A> = A extends ActionDefinition<infer Context> ? Context : never;

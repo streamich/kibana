@@ -19,6 +19,7 @@
 
 import { CoreStart, CoreSetup, Plugin, PluginInitializerContext } from 'src/core/public';
 import { UiActionsService } from './service';
+import { UsageCollectionSetup, UsageCollectionStart } from '../../usage_collection/public';
 import {
   selectRangeTrigger,
   valueClickTrigger,
@@ -39,12 +40,21 @@ export type UiActionsSetup = Pick<
 
 export type UiActionsStart = PublicMethodsOf<UiActionsService>;
 
-export class UiActionsPlugin implements Plugin<UiActionsSetup, UiActionsStart> {
+export interface UiActionsSetupDeps {
+  usageCollection: UsageCollectionSetup;
+}
+
+export interface UiActionsStartDeps {
+  usageCollection: UsageCollectionStart;
+}
+
+export class UiActionsPlugin
+  implements Plugin<UiActionsSetup, UiActionsStart, UiActionsSetupDeps, UiActionsStartDeps> {
   private readonly service = new UiActionsService();
 
   constructor(initializerContext: PluginInitializerContext) {}
 
-  public setup(core: CoreSetup): UiActionsSetup {
+  public setup(core: CoreSetup, plugins: UiActionsSetupDeps): UiActionsSetup {
     this.service.registerTrigger(selectRangeTrigger);
     this.service.registerTrigger(valueClickTrigger);
     this.service.registerTrigger(applyFilterTrigger);
@@ -53,7 +63,7 @@ export class UiActionsPlugin implements Plugin<UiActionsSetup, UiActionsStart> {
     return this.service;
   }
 
-  public start(core: CoreStart): UiActionsStart {
+  public start(core: CoreStart, plugins: UiActionsStartDeps): UiActionsStart {
     return this.service;
   }
 

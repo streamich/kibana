@@ -9,5 +9,6 @@
   "requiredBundles": [
     "kibanaUtils",
     "kibanaReact"
-  ]
+  ],
+  "optionalPlugins": ["usageCollection"]
 }

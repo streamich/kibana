@@ -161,16 +161,13 @@ export class UiActionsServiceEnhancements
     this.deps.featureUsageSetup.register(definition.licenseFeatureName, definition.minimalLicense);
   };
 
-  public readonly telemetry = (state: DynamicActionsState, telemetry: Record<string, any> = {}) => {
-    let telemetryData = telemetry;
+  public readonly telemetry = (state: DynamicActionsState, metrics: Record<string, any> = {}) => {
     state.events.forEach((event: SerializedEvent) => {
       if (this.actionFactories.has(event.action.factoryId)) {
-        telemetryData = this.actionFactories
-          .get(event.action.factoryId)!
-          .telemetry(event, telemetryData);
+        metrics = this.actionFactories.get(event.action.factoryId)!.telemetry(event, metrics);
       }
     });
-    return telemetryData;
+    return metrics;
   };
 
   public readonly extract = (state: DynamicActionsState) => {
